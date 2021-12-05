@@ -41,7 +41,7 @@ public class Node {
 		this.beta=beta;
 		
 	}
-	public Node(Node parent ,int [][]state,int colNum,int levelNum,int humanPlayerScore,int aiPlayerScore) {
+	public Node(Node parent ,int [][]state,int colNum,int humanPlayerScore,int aiPlayerScore) {
 		this.colNum=colNum;
 		this.parent=parent;
 		this.state=state;
