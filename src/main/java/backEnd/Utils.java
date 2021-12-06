@@ -1,5 +1,7 @@
 package backEnd;
 
+import java.util.ArrayList;
+
 public class Utils {
 	
 	/*
@@ -32,7 +34,35 @@ public class Utils {
 	 * 
 	 * */
 	private double potentials (int state[][],int player) {
-		
+		double count=0;
+		for(int i=0;i<6;i++) {
+			for(int j=0;j<7;j++) {
+				if(state[i][j]==player) {
+					if(i!=0) {
+						if(state[i-1][j]==0)
+							count++;
+						if(j!=0&&state[i-1][j-1]==0)
+							count++;
+						if(j!=6&&state[i-1][j+1]==0)
+							count++;
+						
+					}
+					if(i!=5) {
+						if(state[i+1][j]==0)
+							count++;
+						if(j!=0&&state[i+1][j-1]==0)
+							count++;
+						if(j!=6&&state[i+1][j+1]==0)
+							count++;
+					}
+					if(j!=6&&state[i][j+1]==0)
+						count++;
+					if(j!=0&&state[i][j-1]==0)
+						count++;
+				}
+			}
+		}
+		return count;
 	}
 	//we call 4 then oneplay till win then threes then twos
 	public double  heuristics(Node terminal) {
@@ -42,13 +72,64 @@ public class Utils {
 		
 		
 	}
-	public Node[] getNeighbours(Node State) {
-		
+	public ArrayList<Node>getNeighbours(Node State) {
+		int arr[][]=State.getState();
+		ArrayList <Node>returnedNodes=new ArrayList<Node>();
+		for(int i=0;i<7;i++){
+			int tempArr[][]=putCheckered(arr,i);
+			if(!compareArrays(tempArr,State.getState())) {
+			Node temp=new Node(State,tempArr,i,State.getHumanPlayerScore(),State.getAiPlayerScore());
+			returnedNodes.add(temp);
+			}
+		}
+		return returnedNodes;
 	}
-	private int [][]putCheckered(int arr[][]) {
-		
-		return arr;
+	public ArrayList<Node>getNeighboursPruning(Node State) {
+		int arr[][]=State.getState();
+		ArrayList <Node>returnedNodes=new ArrayList<Node>();
+		for(int i=0;i<7;i++){
+			int tempArr[][]=putCheckered(arr,i);
+			if(!compareArrays(tempArr,State.getState())) {
+			Node temp=new Node(State,tempArr,i,State.getHumanPlayerScore(),State.getAiPlayerScore(),Integer.MIN_VALUE,Integer.MAX_VALUE);
+			returnedNodes.add(temp);
+			}
+		}
+		return returnedNodes;
 	}
-	
+	//getNeighbours for pruning
+	private int [][]putCheckered(int arr[][],int col) {
+		int returnedArr[][]=new int [6][7];
+		returnedArr=copyArray(arr,returnedArr);
+		for(int j=0;j<6;j++) {
+			if(j==5&&arr[j][col]==0) {
+				returnedArr[j][col]=2;
+			}
+			else if(arr[j][col]!=0) {
+				returnedArr[j-1][col]=2;
+				j=6;
+			}
+		}
+		return returnedArr;
+	}
+	private boolean compareArrays(int source[][],int destination[][]) {
+		boolean returned=true;
+		for (int i=0;i<6;i++) {
+			for(int j=0;j<7;j++) {
+				if(destination[i][j]!=source[i][j]) {
+					returned=false;
+				}
+				
+			}
+		}
+		return returned;
+	}
+	int [][]copyArray(int source[][],int destination[][]) {
+		for (int i=0;i<6;i++) {
+			for(int j=0;j<7;j++) {
+				destination[i][j]=source[i][j];
+			}
+		}
+		return destination;
+	}
 	
 }
